@@ -13,3 +13,5 @@ A simple, fast and scalable bug tracking system that helps you manage bugs easil
 - Docker
 - Netlify
 - Auth0
+
+> ### Live Demo - https://melodic-zabaione-e39db4.netlify.app/
