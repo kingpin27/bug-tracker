@@ -1,5 +1,6 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
+// generator erd {
+//   provider = "prisma-erd-generator"
+// }
 
 generator client {
   provider = "prisma-client-js"
@@ -10,48 +11,79 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+enum TicketStatus {
+  OPEN
+  ASSIGNED
+  CLOSED
+}
+
+enum TicketPriority {
+  LOW
+  MEDIUM
+  HIGH
+  
+}
+
 model User {
-  id         Int       @id @default(autoincrement())
-  name       String
-  email      String    @unique
-  projects   Project[]
-  myProjects Project[] @relation("admin")
+  id                String    @id @default(uuid())
+  auth0ID           String    @unique
+  name              String
+  email             String    @unique
+  about             String?
+  projects          Project[]
+  myProjects        Project[] @relation("admin")
+  assignedTickets   Ticket[]  @relation("assignedTickets")
+  comments          Comment[]
+  mytickets         Ticket[]
+  creationTimestamp DateTime  @default(now())
 
   @@map("users")
 }
 
 model Project {
-  id          Int      @id @default(autoincrement())
-  name        String
-  description String
-  tags        String[]
-  developers  User[]
-  tickets     Ticket[]
-  adminID     Int
-  admin       User     @relation(fields: [adminID], references: [id], name: "admin")
+  id                Int      @id @default(autoincrement())
+  name              String
+  description       String
+  tags              String[]
+  developers        User[]
+  tickets           Ticket[]
+  adminID           String
+  admin             User     @relation(fields: [adminID], references: [id], name: "admin")
+  creationTimestamp DateTime @default(now())
 
   @@map("projects")
 }
 
 model Ticket {
-  id          Int       @id @default(autoincrement())
-  title       String
-  description String
-  projectId   Int
-  comments    Comment[]
-  projectID   Int
-  project     Project   @relation(fields: [projectID], references: [id])
+  id                Int            @id @default(autoincrement())
+  title             String
+  description       String
+  projectId         Int
+  comments          Comment[]
+  tags              String[]
+  status            TicketStatus
+  assignedDevID     String
+  assignedTo        User           @relation(fields: [assignedDevID], references: [id], name: "assignedTickets")
+  priority          TicketPriority
+  projectID         Int
+  project           Project        @relation(fields: [projectID], references: [id])
+  creatorID         String
+  creator           User           @relation(fields: [creatorID], references: [id])
+  creationTimestamp DateTime       @default(now())
+  userId            String
 
   @@map("tickets")
 }
 
 model Comment {
-  id        Int      @id @default(autoincrement())
-  content   String
-  ticketId  Int
-  timestamp DateTime @default(now())
-  ticketID  Int
-  ticket    Ticket   @relation(fields: [ticketID], references: [id])
+  id                Int      @id @default(autoincrement())
+  content           String
+  ticketId          Int
+  creatorID         String
+  creator           User     @relation(fields: [creatorID], references: [id])
+  ticketID          Int
+  ticket            Ticket   @relation(fields: [ticketID], references: [id])
+  creationTimestamp DateTime @default(now())
 
   @@map("comments")
 }
