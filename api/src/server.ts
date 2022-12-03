@@ -9,6 +9,7 @@ function StartServer(prismaClient: PrismaClient) {
 
   const app = express();
   app.use(cors());
+  app.get('/api/ping', (req,res) => res.json({message: "pong"}))
   app.use(express.json());
   app.use(
     auth({

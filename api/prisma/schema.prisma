@@ -1,7 +1,3 @@
-// generator erd {
-//   provider = "prisma-erd-generator"
-// }
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -21,37 +17,49 @@ enum TicketPriority {
   LOW
   MEDIUM
   HIGH
-  
+}
+
+enum MembershipType {
+  DEVELOPER
+  ADMIn
 }
 
 model User {
-  id                String    @id @default(uuid())
-  auth0ID           String    @unique
+  id                String           @id @default(uuid())
+  auth0ID           String           @unique
   name              String
-  email             String    @unique
+  email             String           @unique
   about             String?
-  projects          Project[]
-  myProjects        Project[] @relation("admin")
-  assignedTickets   Ticket[]  @relation("assignedTickets")
+  assignedTickets   Ticket[]         @relation("assignedTickets")
   comments          Comment[]
   mytickets         Ticket[]
-  creationTimestamp DateTime  @default(now())
+  creationTimestamp DateTime         @default(now())
+  ProjectToUser     ProjectsOnUser[]
 
   @@map("users")
 }
 
 model Project {
-  id                Int      @id @default(autoincrement())
+  id                Int              @id @default(autoincrement())
   name              String
   description       String
   tags              String[]
-  developers        User[]
   tickets           Ticket[]
-  adminID           String
-  admin             User     @relation(fields: [adminID], references: [id], name: "admin")
-  creationTimestamp DateTime @default(now())
+  creationTimestamp DateTime         @default(now())
+  ProjectToUser     ProjectsOnUser[]
 
   @@map("projects")
+}
+
+model ProjectsOnUser {
+  userID            String
+  user              User           @relation(fields: [userID], references: [id])
+  projectID         Int
+  project           Project        @relation(fields: [projectID], references: [id])
+  assignedTimestamp DateTime       @default(now())
+  type              MembershipType
+
+  @@id([projectID, userID])
 }
 
 model Ticket {

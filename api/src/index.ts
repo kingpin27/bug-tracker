@@ -1,5 +1,5 @@
-import * as dotenv from 'dotenv'
-dotenv.config()
+import * as dotenv from "dotenv";
+dotenv.config();
 import StartServer from "./server";
 import { PrismaClient } from "@prisma/client";
 

@@ -1,7 +1,7 @@
 import { useRoutes } from "react-router-dom";
-import Appbar from "./components/Appbar";
 import Home from "./pages/Home";
 import Profile from "./pages/profile";
+import SidebarWithHeader from "./components/SidebarWithHeader";
 
 export default () => {
   const routes = useRoutes([
@@ -11,13 +11,8 @@ export default () => {
     },
     {
       path: "/profile",
-      element: <Profile/>
-    }
+      element: <Profile />,
+    },
   ]);
-  return (
-    <>
-      <Appbar />
-      {routes}
-    </>
-  );
+  return <SidebarWithHeader>{routes}</SidebarWithHeader>;
 };
